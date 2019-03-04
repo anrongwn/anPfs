@@ -64,6 +64,8 @@ BEGIN_MESSAGE_MAP(CanPfs_prDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &CanPfs_prDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CanPfs_prDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -99,6 +101,14 @@ BOOL CanPfs_prDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	auto cpath = this->GetDlgItem(IDC_EDIT_filepath);
+	cpath->SetWindowText(R"(C:\ktXFS Config\FormsAnsiChinese_jpr)");
+
+	auto cpostfix = this->GetDlgItem(IDC_EDIT_postfix);
+	cpostfix->SetWindowText(R"(def)");
+
+	this->UpdateData();
+
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -152,3 +162,15 @@ HCURSOR CanPfs_prDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CanPfs_prDlg::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+
+void CanPfs_prDlg::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
