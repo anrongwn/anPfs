@@ -6,3 +6,8 @@
 #include "stdafx.h"
 
 
+#ifdef DEBUG
+#pragma comment(lib, "libuv.lib")
+#else
+#pragma comment(lib, "libuv.lib")
+#endif // DEBUG
