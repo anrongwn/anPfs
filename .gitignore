@@ -243,3 +243,14 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+
+#libuv
+./libuv*
+./libuv-v1.26.0
+./libuv-v1.26.0/*
+
+#logs
+./logs
+./logs/*
+/libuv-v1.26.0
