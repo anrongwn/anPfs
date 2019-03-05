@@ -50,11 +50,22 @@ END_MESSAGE_MAP()
 
 
 CanPfs_prDlg::CanPfs_prDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_ANPFS_PR_DIALOG, pParent)
+	: CDialogEx(IDD_ANPFS_PR_DIALOG, pParent), uvfs_(nullptr)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+CanPfs_prDlg::~CanPfs_prDlg() {
+	if (uvfs_) {
+		uvfs_->stop();
+
+		delete uvfs_;
+	}
+		
+
+	CDialog::~CDialog();
+
+}
 void CanPfs_prDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
@@ -105,7 +116,7 @@ BOOL CanPfs_prDlg::OnInitDialog()
 	cpath->SetWindowText(R"(C:\ktXFS Config\FormsAnsiChinese_jpr)");
 
 	auto cpostfix = this->GetDlgItem(IDC_EDIT_postfix);
-	cpostfix->SetWindowText(R"(def)");
+	cpostfix->SetWindowText(R"(.def)");
 
 	this->UpdateData();
 
@@ -173,4 +184,16 @@ void CanPfs_prDlg::OnBnClickedButton1()
 void CanPfs_prDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if (!uvfs_) {
+		uvfs_ = new CanUVFS();
+	}
+
+	this->UpdateData(FALSE);
+
+	CString path;
+	this->GetDlgItem(IDC_EDIT_filepath)->GetWindowText(path);
+	CString postfix;
+	this->GetDlgItem(IDC_EDIT_postfix)->GetWindowText(postfix);
+
+	uvfs_->start(path.operator LPCSTR(), postfix.operator LPCSTR());
 }

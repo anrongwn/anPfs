@@ -254,3 +254,4 @@ ModelManifest.xml
 ./logs
 ./logs/*
 /libuv-v1.26.0
+*.filters

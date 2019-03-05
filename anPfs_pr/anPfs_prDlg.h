@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include "CanUVFS.h"
 
 // CanPfs_prDlg 对话框
 class CanPfs_prDlg : public CDialogEx
@@ -11,7 +11,7 @@ class CanPfs_prDlg : public CDialogEx
 // 构造
 public:
 	CanPfs_prDlg(CWnd* pParent = NULL);	// 标准构造函数
-
+	~CanPfs_prDlg();
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ANPFS_PR_DIALOG };
@@ -34,4 +34,7 @@ protected:
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
+
+private:
+	CanUVFS *uvfs_;
 };
