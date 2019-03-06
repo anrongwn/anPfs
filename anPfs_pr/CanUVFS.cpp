@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CanUVFS.h"
 
+std::list<CanFileMap> CanUVFS::s_fml_;
 
 CanUVFS::CanUVFS()
 {
@@ -29,6 +30,9 @@ void CanUVFS::event_handler(void * arg) {
 	int more = 0;
 	while (that->flag_) {
 		more = uv_run(that->loop_, UV_RUN_NOWAIT);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
 		if (more) continue;
 	}
 
@@ -56,7 +60,7 @@ int CanUVFS::start(const char* path, const char* postfix) {
 	r = uv_thread_create(&engine_, CanUVFS::event_handler, this);
 	if (0 == r) {
 		//开始扫描路径
-		uv_fs_t * req = new uv_fs_t;
+		uv_fs_t * req = (uv_fs_t *)malloc(sizeof uv_fs_t);
 		if (req) {
 			uv_req_set_data((uv_req_t*)req, this);
 		}
@@ -92,7 +96,7 @@ void CanUVFS::on_fs_scandir(uv_fs_t* scandired_req) {
 		while (UV_EOF != uv_fs_scandir_next(scandired_req, &dir)) {
 			//读文件
 			if (UV_DIRENT_FILE == dir.type) {
-				uv_fs_t * open_req = new uv_fs_t;
+				uv_fs_t * open_req = (uv_fs_t *)malloc(sizeof uv_fs_t);;
 				uv_req_set_data((uv_req_t*)open_req, that);
 				
 				std::string fullname(scandired_req->path);
@@ -104,23 +108,26 @@ void CanUVFS::on_fs_scandir(uv_fs_t* scandired_req) {
 	}
 	
 	uv_fs_req_cleanup(scandired_req);
-	delete scandired_req;
+	free(scandired_req);
 }
 
-char buffer[1024] = { 0x00 };
+static char buffer[1024] = { 0x00 };
 void CanUVFS::on_fs_open(uv_fs_t* opened_req) {
 	CanUVFS * that = static_cast<CanUVFS*>(opened_req->data);
 
 	int r = 0;
 	if (opened_req->result!=-1) {
-		uv_fs_t * read_req = new uv_fs_t;
+		uv_fs_t * read_req = (uv_fs_t *)malloc(sizeof uv_fs_t);
 		//uv_req_set_data((uv_req_t*)read_req, opened_req);
 		uv_buf_t buf = uv_buf_init(buffer, 1024);
 		r = uv_fs_read(opened_req->loop, read_req, opened_req->result, &buf, 1, -1, CanUVFS::on_fs_read);
+
+		//CanFileMap fm(opened_req->path, opened_req->result);
+		CanUVFS::s_fml_.emplace_back(CanFileMap(opened_req->path, opened_req->result));
 	}
 
 	uv_fs_req_cleanup(opened_req);
-	delete opened_req;
+	free(opened_req);
 
 }
 
@@ -130,23 +137,27 @@ void CanUVFS::on_fs_read(uv_fs_t* readed_req) {
 	int r = 0;
 	if (readed_req->result < 0) {
 		
-		
 	}
 	else if (readed_req->result == 0) {
 		uv_fs_t close_req;
-		//uv_fs_close(readed_req->loop, &close_req, open_req->result, NULL);
-		//delete open_req;
 		uv_fs_close(readed_req->loop, &close_req, readed_req->file.fd, NULL);
 
-		uv_fs_req_cleanup(readed_req);
-		delete readed_req;
 	}
 	else if (readed_req->result > 0) {
-		
+		//
+		auto it = s_fml_.end();
+		std::for_each(s_fml_.begin(), s_fml_.end, [&it](s_fml_::))
+		//再读
+		uv_fs_t * read_req = (uv_fs_t *)malloc(sizeof uv_fs_t);;
+		read_req->loop = readed_req->loop;
+		read_req->file.fd = readed_req->file.fd;
+
 		uv_buf_t buf = uv_buf_init(buffer, 1024);
-		r = uv_fs_read(readed_req->loop, readed_req, readed_req->file.fd/*open_req->result*/, &buf, 1, -1, CanUVFS::on_fs_read);
+		r = uv_fs_read(read_req->loop, read_req, readed_req->file.fd, &buf, 1, -1, CanUVFS::on_fs_read);
 		
-		//uv_fs_req_cleanup(req);
 	}
 
+	//清除
+	uv_fs_req_cleanup(readed_req);
+	free(readed_req);
 }

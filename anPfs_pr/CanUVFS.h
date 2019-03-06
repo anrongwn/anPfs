@@ -4,6 +4,10 @@
 #include <memory>
 #include <thread>
 #include <atomic>
+#include <chrono>
+#include <list>
+#include <algorithm>
+#include "CanFileMap.h"
 
 class CanUVFS
 {
@@ -25,6 +29,9 @@ private:
 	static void on_fs_open(uv_fs_t* opened_req);
 	static void on_fs_read(uv_fs_t* readed_req);
 
+	//文件内容映射列表
+	static std::list<CanFileMap> s_fml_;
+
 private:
 	std::atomic_bool flag_ = { ATOMIC_FLAG_INIT };
 	uv_thread_t engine_ = { nullptr };
@@ -32,6 +39,7 @@ private:
 
 	std::string path_;
 	std::string postfix_;
+
 
 };
 
