@@ -42,6 +42,10 @@ CanFileMap& CanFileMap::operator=(CanFileMap&& obj) {
 	return (*this);
 }
 
+bool CanFileMap::operator==(const int fd) {
+	return (fd_ == fd);
+}
+
 bool CanFileMap::operator==(const CanFileMap& obj) {
 	bool r = false;
 
@@ -62,4 +66,16 @@ bool CanFileMap::operator<(const CanFileMap& obj) {
 
 void CanFileMap::push_data(const char* data, size_t len) {
 	data_ += std::string(data, len);
+}
+
+int CanFileMap::output() {
+	std::string tmp = name_;
+	tmp += "1";
+
+	std::ofstream file(tmp, std::ios::out);
+	file << data_;
+	//file.flush();
+	file.close();
+
+	return 0;
 }

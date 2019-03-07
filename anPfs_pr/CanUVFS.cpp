@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CanUVFS.h"
-
+#include "CanReadReq.h"
 std::list<CanFileMap> CanUVFS::s_fml_;
 
 CanUVFS::CanUVFS()
@@ -111,15 +111,15 @@ void CanUVFS::on_fs_scandir(uv_fs_t* scandired_req) {
 	free(scandired_req);
 }
 
-static char buffer[1024] = { 0x00 };
+//static char buffer[1024] = { 0x00 };
 void CanUVFS::on_fs_open(uv_fs_t* opened_req) {
 	CanUVFS * that = static_cast<CanUVFS*>(opened_req->data);
 
 	int r = 0;
 	if (opened_req->result!=-1) {
-		uv_fs_t * read_req = (uv_fs_t *)malloc(sizeof uv_fs_t);
+		CanReadReq * read_req = new CanReadReq();// (uv_fs_t *)malloc(sizeof uv_fs_t);
 		//uv_req_set_data((uv_req_t*)read_req, opened_req);
-		uv_buf_t buf = uv_buf_init(buffer, 1024);
+		uv_buf_t buf = uv_buf_init(read_req->data2, DATA2_LEN);
 		r = uv_fs_read(opened_req->loop, read_req, opened_req->result, &buf, 1, -1, CanUVFS::on_fs_read);
 
 		//CanFileMap fm(opened_req->path, opened_req->result);
@@ -142,22 +142,33 @@ void CanUVFS::on_fs_read(uv_fs_t* readed_req) {
 		uv_fs_t close_req;
 		uv_fs_close(readed_req->loop, &close_req, readed_req->file.fd, NULL);
 
+		//²âÊÔÊä³ö
+		auto iter = std::find(std::begin(s_fml_), std::end(s_fml_), readed_req->file.fd);
+		if (iter != s_fml_.end()) {
+			iter->output();
+		}
 	}
 	else if (readed_req->result > 0) {
 		//
-		auto it = s_fml_.end();
-		std::for_each(s_fml_.begin(), s_fml_.end, [&it](s_fml_::))
+		auto iter = std::find(std::begin(s_fml_), std::end(s_fml_), readed_req->file.fd);
+		if (iter != s_fml_.end()) {
+			iter->push_data(readed_req->fs.info.bufs->base, readed_req->result);
+		}
+		
+		
 		//ÔÙ¶Á
-		uv_fs_t * read_req = (uv_fs_t *)malloc(sizeof uv_fs_t);;
+		//uv_fs_t * read_req = (uv_fs_t *)malloc(sizeof uv_fs_t);;
+		CanReadReq * read_req = new CanReadReq();
 		read_req->loop = readed_req->loop;
 		read_req->file.fd = readed_req->file.fd;
 
-		uv_buf_t buf = uv_buf_init(buffer, 1024);
+		uv_buf_t buf = uv_buf_init(read_req->data2, DATA2_LEN);
 		r = uv_fs_read(read_req->loop, read_req, readed_req->file.fd, &buf, 1, -1, CanUVFS::on_fs_read);
 		
 	}
 
 	//Çå³ý
 	uv_fs_req_cleanup(readed_req);
-	free(readed_req);
+	//free(readed_req);
+	delete readed_req;
 }

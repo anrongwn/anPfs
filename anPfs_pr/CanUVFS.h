@@ -18,6 +18,7 @@ public:
 	int start(const char* path, const char* postfix);
 	int stop();
 
+	using FM_LIST = std::list<CanFileMap>;
 private:
 	static void  event_handler(void * arg);
 
@@ -30,7 +31,7 @@ private:
 	static void on_fs_read(uv_fs_t* readed_req);
 
 	//文件内容映射列表
-	static std::list<CanFileMap> s_fml_;
+	static FM_LIST s_fml_;
 
 private:
 	std::atomic_bool flag_ = { ATOMIC_FLAG_INIT };

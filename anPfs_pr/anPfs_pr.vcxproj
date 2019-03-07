@@ -190,6 +190,7 @@
     <ClInclude Include="anPfs_pr.h" />
     <ClInclude Include="anPfs_prDlg.h" />
     <ClInclude Include="CanFileMap.h" />
+    <ClInclude Include="CanReadReq.h" />
     <ClInclude Include="CanUVFS.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="anPfs_pr.cpp" />
     <ClCompile Include="anPfs_prDlg.cpp" />
     <ClCompile Include="CanFileMap.cpp" />
+    <ClCompile Include="CanReadReq.cpp" />
     <ClCompile Include="CanUVFS.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

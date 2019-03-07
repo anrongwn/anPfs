@@ -2,6 +2,7 @@
 #include <string>
 #include <locale>
 #include <sstream>
+#include <fstream>
 
 class CanFileMap
 {
@@ -17,11 +18,14 @@ public:
 
 	bool operator==(const CanFileMap& obj);
 	bool operator<(const CanFileMap& obj);
+	bool operator==(const int fd);
 
 	void push_data(const char* data, size_t len);
 	size_t get_data_length() {
 		return data_.length();
 	}
+	
+	int output();
 private:
 	std::string name_;
 	int fd_;
