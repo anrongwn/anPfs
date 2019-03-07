@@ -3,6 +3,31 @@
 #include "CanReadReq.h"
 std::list<CanFileMap> CanUVFS::s_fml_;
 
+
+logger& CanUVFS::getlogger() {
+	static logger g_anlog;
+	if (!g_anlog) {
+
+		std::string logpath(R"(D:\MyTest\2018_C++\anPfs\logs\uvfs)");
+		logpath += ".log";
+
+		//是否已启动日志线程池?
+		auto tp = spdlog::thread_pool();
+		if (!tp) {
+			spdlog::init_thread_pool(65536, 1);
+		}
+		g_anlog = spdlog::daily_logger_mt<spdlog::async_factory>("uvfs", logpath);
+
+		g_anlog->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^---%L---%$] [%t] %v");
+		g_anlog->set_level(spdlog::level::trace);
+		g_anlog->flush_on(spdlog::level::info);
+
+	}
+
+	return g_anlog;
+}
+#define LOG_INFO(info)	CanUVFS::getlogger()->info("{}", std::string(info));
+
 CanUVFS::CanUVFS()
 {
 }
@@ -57,6 +82,7 @@ int CanUVFS::start(const char* path, const char* postfix) {
 		loop_ = uv_default_loop();
 	}
 
+	CanUVFS::getlogger()->info("CanUVFS::start({})", path);
 	r = uv_thread_create(&engine_, CanUVFS::event_handler, this);
 	if (0 == r) {
 		//开始扫描路径
@@ -122,6 +148,7 @@ void CanUVFS::on_fs_open(uv_fs_t* opened_req) {
 		uv_buf_t buf = uv_buf_init(read_req->data2, DATA2_LEN);
 		r = uv_fs_read(opened_req->loop, read_req, opened_req->result, &buf, 1, -1, CanUVFS::on_fs_read);
 
+		//保存到文件列表中
 		//CanFileMap fm(opened_req->path, opened_req->result);
 		CanUVFS::s_fml_.emplace_back(CanFileMap(opened_req->path, opened_req->result));
 	}
@@ -142,11 +169,15 @@ void CanUVFS::on_fs_read(uv_fs_t* readed_req) {
 		uv_fs_t close_req;
 		uv_fs_close(readed_req->loop, &close_req, readed_req->file.fd, NULL);
 
-		//测试输出
+		//读完成通知
 		auto iter = std::find(std::begin(s_fml_), std::end(s_fml_), readed_req->file.fd);
 		if (iter != s_fml_.end()) {
-			iter->output();
+			iter->complete();
+
+			CanUVFS::getlogger()->info("CanUVFS::on_fs_read({}-{}) completed.", iter->get_name(), iter->get_fd());
 		}
+
+		
 	}
 	else if (readed_req->result > 0) {
 		//
@@ -156,7 +187,7 @@ void CanUVFS::on_fs_read(uv_fs_t* readed_req) {
 		}
 		
 		
-		//再读
+		//提交再读请求
 		//uv_fs_t * read_req = (uv_fs_t *)malloc(sizeof uv_fs_t);;
 		CanReadReq * read_req = new CanReadReq();
 		read_req->loop = readed_req->loop;

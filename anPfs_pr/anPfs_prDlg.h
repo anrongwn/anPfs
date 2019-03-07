@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CanUVFS.h"
+#include "CanCMFS.h"
 
 // CanPfs_prDlg ¶Ô»°¿ò
 class CanPfs_prDlg : public CDialogEx
@@ -37,4 +38,5 @@ public:
 
 private:
 	CanUVFS *uvfs_;
+	CanCMFS *cmfs_;
 };

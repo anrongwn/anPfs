@@ -50,7 +50,7 @@ END_MESSAGE_MAP()
 
 
 CanPfs_prDlg::CanPfs_prDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_ANPFS_PR_DIALOG, pParent), uvfs_(nullptr)
+	: CDialogEx(IDD_ANPFS_PR_DIALOG, pParent), uvfs_(nullptr),cmfs_(nullptr)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -62,7 +62,10 @@ CanPfs_prDlg::~CanPfs_prDlg() {
 		delete uvfs_;
 	}
 		
-
+	if (cmfs_)
+	{
+		delete cmfs_;
+	}
 	CDialog::~CDialog();
 
 }
@@ -178,6 +181,18 @@ HCURSOR CanPfs_prDlg::OnQueryDragIcon()
 void CanPfs_prDlg::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if (!cmfs_) {
+		cmfs_ = new CanCMFS();
+	}
+
+	this->UpdateData(FALSE);
+
+	CString path;
+	this->GetDlgItem(IDC_EDIT_filepath)->GetWindowText(path);
+	CString postfix;
+	this->GetDlgItem(IDC_EDIT_postfix)->GetWindowText(postfix);
+
+	cmfs_->start(path.operator LPCSTR(), postfix.operator LPCSTR());
 }
 
 

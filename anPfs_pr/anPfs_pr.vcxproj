@@ -75,7 +75,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\MyTest\2018_C++\anPfs\libuv-v1.26.0\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\MyTest\2018_C++\anPfs\deps\include;D:\MyTest\2018_C++\anPfs\libuv-v1.26.0\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\MyTest\2018_C++\anPfs\libuv-v1.26.0\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -189,6 +189,7 @@
   <ItemGroup>
     <ClInclude Include="anPfs_pr.h" />
     <ClInclude Include="anPfs_prDlg.h" />
+    <ClInclude Include="CanCMFS.h" />
     <ClInclude Include="CanFileMap.h" />
     <ClInclude Include="CanReadReq.h" />
     <ClInclude Include="CanUVFS.h" />
@@ -199,6 +200,7 @@
   <ItemGroup>
     <ClCompile Include="anPfs_pr.cpp" />
     <ClCompile Include="anPfs_prDlg.cpp" />
+    <ClCompile Include="CanCMFS.cpp" />
     <ClCompile Include="CanFileMap.cpp" />
     <ClCompile Include="CanReadReq.cpp" />
     <ClCompile Include="CanUVFS.cpp" />

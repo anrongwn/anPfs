@@ -9,6 +9,13 @@
 #include <algorithm>
 #include "CanFileMap.h"
 
+#include "spdlog/spdlog.h"
+#include "spdlog//async.h"
+#include "spdlog/sinks/daily_file_sink.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog//fmt/fmt.h"
+
+using logger = std::shared_ptr<spdlog::logger>;
 class CanUVFS
 {
 public:
@@ -19,6 +26,9 @@ public:
 	int stop();
 
 	using FM_LIST = std::list<CanFileMap>;
+
+	//日志
+	static logger& getlogger();
 private:
 	static void  event_handler(void * arg);
 
@@ -32,6 +42,8 @@ private:
 
 	//文件内容映射列表
 	static FM_LIST s_fml_;
+
+	
 
 private:
 	std::atomic_bool flag_ = { ATOMIC_FLAG_INIT };

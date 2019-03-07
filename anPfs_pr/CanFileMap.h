@@ -25,7 +25,14 @@ public:
 		return data_.length();
 	}
 	
-	int output();
+	int complete();
+	const char* get_name() {
+		return name_.c_str();
+	}
+
+	int get_fd() {
+		return fd_;
+	}
 private:
 	std::string name_;
 	int fd_;

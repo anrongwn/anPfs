@@ -255,3 +255,4 @@ ModelManifest.xml
 ./logs/*
 /libuv-v1.26.0
 *.filters
+/deps/include/spdlog

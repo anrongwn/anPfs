@@ -68,7 +68,7 @@ void CanFileMap::push_data(const char* data, size_t len) {
 	data_ += std::string(data, len);
 }
 
-int CanFileMap::output() {
+int CanFileMap::complete() {
 	std::string tmp = name_;
 	tmp += "1";
 
