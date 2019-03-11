@@ -193,6 +193,7 @@
   <ItemGroup>
     <ClInclude Include="anPfs_pr.h" />
     <ClInclude Include="anPfs_prDlg.h" />
+    <ClInclude Include="anQue.h" />
     <ClInclude Include="CanCMFS.h" />
     <ClInclude Include="CanFileMap.h" />
     <ClInclude Include="CanReadReq.h" />

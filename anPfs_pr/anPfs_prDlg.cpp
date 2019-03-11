@@ -6,6 +6,7 @@
 #include "anPfs_pr.h"
 #include "anPfs_prDlg.h"
 #include "afxdialogex.h"
+#include "anQue.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -46,9 +47,6 @@ END_MESSAGE_MAP()
 
 
 // CanPfs_prDlg 对话框
-
-
-
 CanPfs_prDlg::CanPfs_prDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_ANPFS_PR_DIALOG, pParent), uvfs_(nullptr),cmfs_(nullptr)
 {
@@ -83,13 +81,40 @@ BEGIN_MESSAGE_MAP(CanPfs_prDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CanPfs_prDlg 消息处理程序
+typedef struct {
+	int data;
+	QUEUE node;//两个 void*指针的数组
+}student;
 
+// CanPfs_prDlg 消息处理程序
 BOOL CanPfs_prDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
 	// 将“关于...”菜单项添加到系统菜单中。
+	student head,second;
+	head.data = 0;
+	head.node[0] = nullptr;
+	head.node[1] = &second;
+
+	second.data = 1;
+	second.node[0] = &head;
+	second.node[1] = nullptr;
+
+	//数组 指针的转换
+	QUEUE * pq = &second.node;//指向‘两个 void*指针的数组’的指针
+	void *p1 = ((*(pq))[0]);
+	void *p2 = ((*(pq))[1]);
+
+	student * p = &head;
+	while (true) {
+		//if (nullptr == p->node[0])break;
+		//if (nullptr == p->node[1])break;
+		if (p == nullptr)break;
+
+		int data = p->data;
+		p = (student*)p->node[1];
+	}
 
 	// IDM_ABOUTBOX 必须在系统命令范围内。
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
