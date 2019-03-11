@@ -92,19 +92,25 @@ BOOL CanPfs_prDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// 将“关于...”菜单项添加到系统菜单中。
-	student head,second;
+	student head,second,first;
 	head.data = 0;
 	head.node[0] = nullptr;
 	head.node[1] = &second;
 
 	second.data = 1;
 	second.node[0] = &head;
-	second.node[1] = nullptr;
+	second.node[1] = &first;
+
+	first.data = 2;
+	first.node[0] = &second;
+	first.node[1] = nullptr;
 
 	//数组 指针的转换
 	QUEUE * pq = &second.node;//指向‘两个 void*指针的数组’的指针
-	void *p1 = ((*(pq))[0]);
-	void *p2 = ((*(pq))[1]);
+	void *p1 = ((*(pq))[0]);//((*pq)+0)
+	void *p2 = ((*(pq))[1]);//((*pq)+1)
+
+	student * ps = (student *)(p1);
 
 	student * p = &head;
 	while (true) {
