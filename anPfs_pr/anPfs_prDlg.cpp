@@ -91,6 +91,8 @@ BOOL CanPfs_prDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
+	size_t off = offsetof(student, node);
+
 	// 将“关于...”菜单项添加到系统菜单中。
 	student head,second,first;
 	head.data = 0;
@@ -111,6 +113,7 @@ BOOL CanPfs_prDlg::OnInitDialog()
 	void *p2 = ((*(pq))[1]);//((*pq)+1)
 
 	student * ps = (student *)(p1);
+	student * psps = (student *)((char*)pq - offsetof(student, node));
 
 	student * p = &head;
 	while (true) {
